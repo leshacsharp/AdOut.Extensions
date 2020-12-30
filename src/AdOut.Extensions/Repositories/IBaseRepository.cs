@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AdOut.Extensions.Repositories
 {
-    public interface IBaseRepository<TEntity> where TEntity : class
+    public interface IBaseRepository<TEntity> where TEntity : PersistentEntity
     {
         void Create(TEntity entity);
         void Update(TEntity entity);
