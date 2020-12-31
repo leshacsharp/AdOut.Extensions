@@ -50,7 +50,7 @@ namespace AdOut.Extensions.Context
 
         private void FillEntities()
         {
-            var userId = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypeNames.UserId)?.Value;
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypeNames.UserId)?.Value;
             var entries = _context.ChangeTracker.Entries();
 
             foreach (var entry in entries)

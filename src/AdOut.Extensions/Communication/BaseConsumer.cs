@@ -9,7 +9,7 @@ namespace AdOut.Extensions.Communication
 {
     public abstract class BaseConsumer<TEvent> : AsyncDefaultBasicConsumer where TEvent : IntegrationEvent
     {
-        public override Task HandleBasicDeliver(string consumerTag, ulong deliveryTag, bool redelivered, string exchange, string routingKey, IBasicProperties properties, ReadOnlyMemory<byte> body)
+        public async override Task HandleBasicDeliver(string consumerTag, ulong deliveryTag, bool redelivered, string exchange, string routingKey, IBasicProperties properties, ReadOnlyMemory<byte> body)
         {
             var jsonBody = Encoding.UTF8.GetString(body.Span);
             var jsonObject = JObject.Parse(jsonBody);
@@ -28,7 +28,7 @@ namespace AdOut.Extensions.Communication
             }
 
             var deliveredEvent = JsonConvert.DeserializeObject<TEvent>(jsonBody);
-            return HandleAsync(deliveredEvent);
+            await HandleAsync(deliveredEvent);
         }
 
         protected abstract Task HandleAsync(TEvent deliveredEvent);
