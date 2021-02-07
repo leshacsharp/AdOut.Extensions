@@ -23,7 +23,7 @@ namespace AdOut.Extensions.Communication
             foreach (var consumer in _consumers)
             {
                 var baseConsumerType = consumer.GetType().BaseType;
-                if (baseConsumerType != null)
+                if (baseConsumerType?.GetGenericTypeDefinition() == typeof(BaseConsumer<>))
                 {
                     var eventType = baseConsumerType.GetGenericArguments().Single();
                     _messageBroker.Subscribe(eventType, consumer);

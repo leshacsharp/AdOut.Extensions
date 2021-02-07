@@ -21,7 +21,7 @@ namespace AdOut.Extensions.Communication
             }
 
             var eventType = jsonObject.GetValue("ObjectType").ToString();
-            if (typeof(TEvent).Name != eventType)
+            if (!typeof(TEvent).Name.Equals(eventType, StringComparison.OrdinalIgnoreCase))
             {
                 var exceptionMessage = $"{this.GetType().Name} received wrong event={eventType} - (exchange={exchange}, routingKey={routingKey})";
                 throw new ArgumentException(exceptionMessage, nameof(body));

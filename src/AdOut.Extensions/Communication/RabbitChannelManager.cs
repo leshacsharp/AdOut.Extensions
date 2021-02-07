@@ -58,12 +58,11 @@ namespace AdOut.Extensions.Communication
                         channel.Dispose();
                     }
                 }
+                else
+                {
+                    channel.Dispose();
+                }
             }
-        }
-
-        public void Dispose()
-        {
-            _connection.Close();
         }
 
         private IConnection CreateConnection()
@@ -94,6 +93,7 @@ namespace AdOut.Extensions.Communication
                     countAttemptsToConnect++;
                     if (countAttemptsToConnect == _config.MaxRetriesToConnect)
                     {
+                        //todo: throw new exceptions with data about attempts to recove a connection
                         throw;
                     }
                     else
@@ -104,6 +104,11 @@ namespace AdOut.Extensions.Communication
             }
 
             return connection;
+        }
+
+        public void Dispose()
+        {
+            _connection.Dispose();
         }
     }
 }

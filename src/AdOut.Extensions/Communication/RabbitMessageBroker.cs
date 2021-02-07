@@ -45,7 +45,8 @@ namespace AdOut.Extensions.Communication
         {
             var channel = _channelManager.GetPublisherChannel();
 
-            var eventTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())                             
+            var eventTypes = AppDomain.CurrentDomain.GetAssemblies()
+                                      .SelectMany(a => a.GetTypes())                             
                                       .Where(t => t.BaseType == typeof(IntegrationEvent));
 
             foreach (var eventType in eventTypes)
