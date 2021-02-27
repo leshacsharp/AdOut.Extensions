@@ -1,2 +1,2 @@
 # AdOut.Extensions
-A library with shared code base for AdOut microservices
+The library with a shared codebase for the AdOut projects
