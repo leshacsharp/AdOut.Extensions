@@ -41,7 +41,7 @@ namespace AdOut.Extensions.Communication
             channel.BasicConsume(queue, true, eventHandler);
         }
 
-        public void CreateQueue(Type eventType, string queue, string routingKey = null, Dictionary<string, object> arguments = null)
+        public void CreateQueue(Type eventType, string queue, string routingKey, Dictionary<string, object> arguments = null)
         {
             var channel = _channelManager.GetPublisherChannel();
 

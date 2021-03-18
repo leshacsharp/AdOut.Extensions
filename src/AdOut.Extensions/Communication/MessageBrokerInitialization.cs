@@ -41,7 +41,7 @@ namespace AdOut.Extensions.Communication
                 if (ignoreQueueDeclareAttr == null)
                 {
                     var queue = _messageBrokerHelper.GetQueueName(eventType);
-                    _messageBroker.CreateQueue(eventType, queue);
+                    _messageBroker.CreateQueue(eventType, queue, queue);
                 }
             }
 
