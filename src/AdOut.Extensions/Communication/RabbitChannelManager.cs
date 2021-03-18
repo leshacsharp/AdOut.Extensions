@@ -53,10 +53,6 @@ namespace AdOut.Extensions.Communication
                     {
                         _sharedChannels.Enqueue(channel);
                     }
-                    else
-                    {
-                        channel.Dispose();
-                    }
                 }
                 else
                 {

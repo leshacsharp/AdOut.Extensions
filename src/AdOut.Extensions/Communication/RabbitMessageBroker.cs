@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using System.Text;
 
 namespace AdOut.Extensions.Communication
@@ -19,45 +19,45 @@ namespace AdOut.Extensions.Communication
             _channelManager = channelManager;
             _messageBrokerHelper = messageBrokerHelper;
         }
-
-        public void Publish(IntegrationEvent integrationEvent)
+        
+        public void Publish(IntegrationEvent integrationEvent, string routingKey = null, Dictionary<string, object> arguments = null)
         {
+            var channel = _channelManager.GetPublisherChannel();
+            var publishProperties = channel.CreateBasicProperties();
+
             var eventJson = JsonConvert.SerializeObject(integrationEvent, new TypeInfoConverter(integrationEvent.GetType()));
             var messageBody = Encoding.UTF8.GetBytes(eventJson);
 
             var exchange = _messageBrokerHelper.GetExchangeName(integrationEvent.GetType());
-            var routingKey = _messageBrokerHelper.GetQueueName(integrationEvent.GetType());
+            publishProperties.Headers = arguments;
 
-            var channel = _channelManager.GetPublisherChannel();
-            channel.BasicPublish(exchange, routingKey, null, messageBody);
-
+            channel.BasicPublish(exchange, routingKey, publishProperties, messageBody);
             _channelManager.ReturnPublisherChannel(channel);
         }
 
-        public void Subscribe(Type eventType, IBasicConsumer eventHandler)
+        public void Subscribe(string queue, IBasicConsumer eventHandler)
         {
-            var queue = _messageBrokerHelper.GetQueueName(eventType);
             var channel = _channelManager.GetConsumerChannel();
             channel.BasicConsume(queue, true, eventHandler);
         }
 
-        public void Configure()
+        public void CreateQueue(Type eventType, string queue, string routingKey = null, Dictionary<string, object> arguments = null)
         {
             var channel = _channelManager.GetPublisherChannel();
 
-            var eventTypes = AppDomain.CurrentDomain.GetAssemblies()
-                                      .SelectMany(a => a.GetTypes())                             
-                                      .Where(t => t.BaseType == typeof(IntegrationEvent));
+            var exchange = _messageBrokerHelper.GetExchangeName(eventType);
+            channel.QueueDeclare(queue, true, false, false, null);
+            channel.QueueBind(queue, exchange, routingKey, arguments);
 
-            foreach (var eventType in eventTypes)
-            {
-                var exchange = _messageBrokerHelper.GetExchangeName(eventType);
-                var queue = _messageBrokerHelper.GetQueueName(eventType);
+            _channelManager.ReturnPublisherChannel(channel);
+        }
 
-                channel.ExchangeDeclare(exchange, ExchangeType.Fanout);
-                channel.QueueDeclare(queue, true, false, false, null);
-                channel.QueueBind(queue, exchange, queue, null);
-            }
+        public void CreateExchange(Type eventType, ExchangeTypeEnum type)
+        {
+            var channel = _channelManager.GetPublisherChannel();
+
+            var exchange = _messageBrokerHelper.GetExchangeName(eventType);
+            channel.ExchangeDeclare(exchange, type.ToString().ToLower());
 
             _channelManager.ReturnPublisherChannel(channel);
         }

@@ -1,4 +1,5 @@
 ﻿using AdOut.Extensions.Communication.Interfaces;
+using AdOut.Extensions.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AdOut.Extensions.Communication
@@ -10,7 +11,7 @@ namespace AdOut.Extensions.Communication
             services.AddSingleton<IChannelManager, RabbitChannelManager>();
             services.AddScoped<IMessageBroker, RabbitMessageBroker>();
             services.AddScoped<IMessageBrokerHelper, MessageBrokerHelper>();
-            services.AddScoped<IConsumerBinder, ConsumerBinder>();
+            services.AddScoped<IInitialization, MessageBrokerInitialization>();
         }
     }
 }
