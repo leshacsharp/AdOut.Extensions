@@ -1,5 +1,4 @@
-﻿using AdOut.Extensions.Communication.Models;
-using System;
+﻿using System;
 
 namespace AdOut.Extensions.Communication
 {
