@@ -35,10 +35,10 @@ namespace AdOut.Extensions.Communication
             _channelManager.ReturnPublisherChannel(channel);
         }
 
-        public void Subscribe(string queue, IBasicConsumer eventHandler)
+        public void Subscribe(string queue, IBasicConsumer consumer)
         {
             var channel = _channelManager.GetConsumerChannel();
-            channel.BasicConsume(queue, true, eventHandler);
+            channel.BasicConsume(queue, true, consumer);
         }
 
         public void CreateQueue(Type eventType, string queue, string routingKey, Dictionary<string, object> arguments = null)
