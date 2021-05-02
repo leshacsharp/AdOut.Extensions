@@ -2,7 +2,7 @@
 
 namespace AdOut.Extensions.Authorization
 {
-    public interface IAthenticationService
+    public interface IAuthenticationService
     {
         Task<AuthResponse> AuthenticateAsync(string clientId, string clientSecret);
     }

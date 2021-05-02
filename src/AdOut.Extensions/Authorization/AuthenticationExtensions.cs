@@ -10,7 +10,7 @@ namespace AdOut.Extensions.Authorization
         {
             services.AddHttpClient();
             var baseUrl = authServerUrl.LastOrDefault() != '/' ? $"{authServerUrl}/" : authServerUrl;
-            services.AddScoped<IAthenticationService>(p => new AthenticationService(p.GetRequiredService<IHttpClientFactory>(), baseUrl));
+            services.AddScoped<IAuthenticationService>(p => new AuthenticationService(p.GetRequiredService<IHttpClientFactory>(), baseUrl));
             return services;
         }
     }

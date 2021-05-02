@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace AdOut.Extensions.Authorization
 {
-    public class AthenticationService : IAthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _baseUrl;
 
-        public AthenticationService(
+        public AuthenticationService(
             IHttpClientFactory httpClientFactory,
             string baseUrl)
         {

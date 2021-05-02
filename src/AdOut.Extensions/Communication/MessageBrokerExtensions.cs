@@ -6,12 +6,13 @@ namespace AdOut.Extensions.Communication
 {
     public static class EventBrokerModule
     {
-        public static void AddMessageBrokerServices(this IServiceCollection services)
+        public static IServiceCollection AddMessageBrokerServices(this IServiceCollection services)
         {
             services.AddSingleton<IChannelManager, RabbitChannelManager>();
             services.AddScoped<IMessageBroker, RabbitMessageBroker>();
             services.AddScoped<IMessageBrokerHelper, MessageBrokerHelper>();
             services.AddScoped<IInitialization, MessageBrokerInitialization>();
+            return services;
         }
     }
 }
