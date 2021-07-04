@@ -74,7 +74,7 @@ namespace AdOut.Extensions.Context
             foreach (var entry in entries)
             {
                 var entityType = entry.Entity.GetType();
-                var entityStateName = ((EventReason)(int)entry.State).ToString();
+                var entityStateName = ((EventAction)(int)entry.State).ToString();
                 var eventName = $"{entityType.Name}{entityStateName}Event";
 
                 var eventType = AppDomain.CurrentDomain.GetAssemblies()

@@ -11,10 +11,10 @@ namespace AdOut.Extensions.Communication
     public class RabbitChannelManager : IChannelManager, IDisposable
     {
         private readonly RabbitConfig _config;
-        private readonly IConnection _connection;      
         private readonly Queue<IModel> _sharedChannels;
         private readonly object _syncDequeue = new object();
         private readonly object _syncEnqueue = new object();
+        private IConnection _connection;
 
         public RabbitChannelManager(IOptions<RabbitConfig> config)
         {
@@ -23,9 +23,21 @@ namespace AdOut.Extensions.Communication
             _sharedChannels = new Queue<IModel>();
         }
 
+        private IConnection Connection
+        {
+            get 
+            {
+                if (_connection == null)
+                {
+                    _connection = CreateConnection();
+                }
+                return _connection;
+            }    
+        }
+
         public IModel GetConsumerChannel()
         {
-            return _connection.CreateModel();
+            return Connection.CreateModel();
         }
 
         public IModel GetPublisherChannel()
@@ -38,7 +50,7 @@ namespace AdOut.Extensions.Communication
                 }
                 else
                 {
-                    return _connection.CreateModel();
+                    return Connection.CreateModel();
                 }
             }
         }
@@ -104,7 +116,7 @@ namespace AdOut.Extensions.Communication
 
         public void Dispose()
         {
-            _connection.Dispose();
+            _connection?.Dispose();
         }
     }
 }

@@ -10,21 +10,17 @@ namespace AdOut.Extensions.Communication
     public abstract class BaseConsumer<TEvent> : AsyncDefaultBasicConsumer where TEvent : IntegrationEvent
     {
         public async override Task HandleBasicDeliver(string consumerTag, ulong deliveryTag, bool redelivered, string exchange, string routingKey, IBasicProperties properties, ReadOnlyMemory<byte> body)
-        {
+        {   
             var jsonBody = Encoding.UTF8.GetString(body.Span);
-            var jsonObject = JObject.Parse(jsonBody);
-
-            if (!jsonObject.ContainsKey("ObjectType"))
+            try
             {
-                var exceptionMessage = $"{this.GetType().Name} received message with wrong schema, missing key 'ObjectType' - (exchange={exchange}, routingKey={routingKey})";
-                throw new ArgumentException(exceptionMessage, nameof(body));
+                var jObject = JObject.Parse(jsonBody);
             }
-
-            var eventType = jsonObject.GetValue("ObjectType").ToString();
-            if (!typeof(TEvent).Name.Equals(eventType, StringComparison.OrdinalIgnoreCase))
+            catch (JsonReaderException ex)
             {
-                var exceptionMessage = $"{this.GetType().Name} received wrong event={eventType} - (exchange={exchange}, routingKey={routingKey})";
-                throw new ArgumentException(exceptionMessage, nameof(body));
+                //todo: log
+                var exceptionMessage = $"{this.GetType().Name} received message with wrong format (body={jsonBody}, exchange={exchange}, routingKey={routingKey})";
+                throw new FormatException(exceptionMessage, ex);
             }
 
             var deliveredEvent = JsonConvert.DeserializeObject<TEvent>(jsonBody);

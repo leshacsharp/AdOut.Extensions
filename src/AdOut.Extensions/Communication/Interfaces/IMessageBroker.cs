@@ -7,8 +7,12 @@ namespace AdOut.Extensions.Communication.Interfaces
     public interface IMessageBroker
     {
         void CreateExchange(Type eventType, ExchangeTypeEnum type);
-        void CreateQueue(Type eventType, string queue, string routingKey = null, Dictionary<string, object> arguments = null);
+        void CreateExchange(string exchange, ExchangeTypeEnum type);
+        void CreateQueue(Type eventType, string routingKey = null, Dictionary<string, object> arguments = null);
+        void CreateQueue(string queue, string exchange, string routingKey = null, Dictionary<string, object> arguments = null);
         void Publish(IntegrationEvent integrationEvent, string routingKey = null, Dictionary<string, object> arguments = null);
+        void Publish(IntegrationEvent integrationEvent, string exchange, string routingKey = null, Dictionary<string, object> arguments = null);
+        void Subscribe(Type eventType, IBasicConsumer consumer);
         void Subscribe(string queue, IBasicConsumer consumer);
     }
 }

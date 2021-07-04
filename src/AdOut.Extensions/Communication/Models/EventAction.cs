@@ -1,6 +1,6 @@
 ﻿namespace AdOut.Extensions.Communication
 {
-    public enum EventReason
+    public enum EventAction
     {
         Deleted = 2,
         Updated = 3,

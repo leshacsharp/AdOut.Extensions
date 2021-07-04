@@ -8,15 +8,31 @@ namespace AdOut.Extensions.Communication
     {
         public string GetQueueName(Type eventType)
         {
-            var eventName = eventType.Name.Replace("Event", string.Empty);           
-            return FromCamelCaseToSnake(eventName) + "-queue";
+            var typeName = GetFullTypeName(eventType).Replace("Event", string.Empty, StringComparison.OrdinalIgnoreCase);
+            return FromCamelCaseToSnake(typeName) + "-queue";
         }
 
         public string GetExchangeName(Type eventType)
         {
-            var eventName = eventType.Name.Replace("Event", string.Empty);
-            return FromCamelCaseToSnake(eventName) + "-exchange";
+            var typeName = GetFullTypeName(eventType).Replace("Event", string.Empty, StringComparison.OrdinalIgnoreCase);
+            return FromCamelCaseToSnake(typeName) + "-exchange";
         }   
+
+        private string GetFullTypeName(Type type)
+        {
+            if (!type.IsGenericType)
+            {
+                return type.Name;
+            }
+
+            var index = type.Name.IndexOf('`');
+            var quName = type.Name.Substring(0, index);
+            foreach (var arg in type.GetGenericArguments())
+            {
+                quName += GetFullTypeName(arg);
+            }
+            return quName;
+        }
 
         private string FromCamelCaseToSnake(string str)
         {
