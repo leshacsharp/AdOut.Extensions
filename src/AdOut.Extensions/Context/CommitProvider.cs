@@ -1,13 +1,12 @@
 ﻿using AdOut.Extensions.Authorization;
 using AdOut.Extensions.Communication;
 using AdOut.Extensions.Communication.Interfaces;
+using AdOut.Extensions.Communication.Models;
 using AdOut.Extensions.Repositories;
-using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,25 +17,22 @@ namespace AdOut.Extensions.Context
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMessageBroker _messageBroker;
         private readonly TContext _context;
-        private readonly IMapper _mapper;
 
         public CommitProvider(
             IHttpContextAccessor httpContextAccessor,
             IMessageBroker messageBroker,
-            TContext context,   
-            IMapper mapper)
+            TContext context)
         {
             _httpContextAccessor = httpContextAccessor;   
             _messageBroker = messageBroker;
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<int> SaveChangesAsync(bool generateEvents = true, CancellationToken cancellationToken = default)
         {
             FillEntities();
 
-            var integrationEvents = generateEvents ? GenerateCRUDIntegrationEvents() : new List<IntegrationEvent>();
+            var integrationEvents = generateEvents ? GenerateReplicationEvents() : new List<IntegrationEvent>();
             var countChanges = await _context.SaveChangesAsync();
 
             //sending events AFTER successed execution of SaveChanges method to avoid no consistent data
@@ -66,7 +62,7 @@ namespace AdOut.Extensions.Context
             }
         }
 
-        private List<IntegrationEvent> GenerateCRUDIntegrationEvents()
+        private List<IntegrationEvent> GenerateReplicationEvents()
         {
             var integrationEvents = new List<IntegrationEvent>();
             var entries = _context.ChangeTracker.Entries();
@@ -74,19 +70,9 @@ namespace AdOut.Extensions.Context
             foreach (var entry in entries)
             {
                 var entityType = entry.Entity.GetType();
-                var entityStateName = ((EventAction)(int)entry.State).ToString();
-                var eventName = $"{entityType.Name}{entityStateName}Event";
-
-                var eventType = AppDomain.CurrentDomain.GetAssemblies()
-                    .SelectMany(a => a.GetTypes())
-                    .FirstOrDefault(t => t.BaseType == typeof(IntegrationEvent) &&
-                                         t.Name.Equals(eventName, StringComparison.OrdinalIgnoreCase));
-                     
-                if (eventType != null)
-                {
-                    var integrationEvent = (IntegrationEvent)_mapper.Map(entry.Entity, entityType, eventType);
-                    integrationEvents.Add(integrationEvent);
-                }
+                var replicationEventType = typeof(ReplicationEvent<>).MakeGenericType(entityType);
+                var replicationEvent = (IntegrationEvent)Activator.CreateInstance(replicationEventType);
+                integrationEvents.Add(replicationEvent);
             }
 
             return integrationEvents;
