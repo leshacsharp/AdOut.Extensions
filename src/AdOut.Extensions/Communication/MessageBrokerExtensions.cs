@@ -11,8 +11,7 @@ namespace AdOut.Extensions.Communication
             services.AddSingleton<IChannelManager, RabbitChannelManager>();
             services.AddScoped<IMessageBroker, RabbitMessageBroker>();
             services.AddScoped<IMessageBrokerHelper, MessageBrokerHelper>();
-            services.AddScoped<IInitialization, SimpleEventsInitialization>();
-            services.AddScoped<IInitialization, ReplicationEventsInitialization>();
+            services.AddScoped<IInitialization, MessageBrokerInitialization>();
             return services;
         }
     }
