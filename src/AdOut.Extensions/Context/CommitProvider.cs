@@ -1,5 +1,6 @@
 ﻿using AdOut.Extensions.Authorization;
 using AdOut.Extensions.Communication;
+using AdOut.Extensions.Communication.Attributes;
 using AdOut.Extensions.Communication.Interfaces;
 using AdOut.Extensions.Communication.Models;
 using AdOut.Extensions.Repositories;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace AdOut.Extensions.Context
 {
@@ -70,9 +72,12 @@ namespace AdOut.Extensions.Context
             foreach (var entry in entries)
             {
                 var entityType = entry.Entity.GetType();
-                var replicationEventType = typeof(ReplicationEvent<>).MakeGenericType(entityType);
-                var replicationEvent = (IntegrationEvent)Activator.CreateInstance(replicationEventType);
-                integrationEvents.Add(replicationEvent);
+                if (entityType.GetCustomAttributes(typeof(ReplicationAttribute), false).Any())
+                {
+                    var replicationEventType = typeof(ReplicationEvent<>).MakeGenericType(entityType);
+                    var replicationEvent = (IntegrationEvent)Activator.CreateInstance(replicationEventType);
+                    integrationEvents.Add(replicationEvent);
+                }
             }
 
             return integrationEvents;

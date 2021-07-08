@@ -20,13 +20,13 @@ namespace AdOut.Extensions.Communication
             _messageBrokerHelper = messageBrokerHelper;
         }
         
-        public void Publish(IntegrationEvent integrationEvent, string routingKey = null, Dictionary<string, object> arguments = null)
+        public void Publish(IntegrationEvent integrationEvent, string routingKey = "", Dictionary<string, object> arguments = null)
         {        
             var exchange = _messageBrokerHelper.GetExchangeName(integrationEvent.GetType());
             Publish(integrationEvent, exchange, routingKey, arguments);
         }
 
-        public void Publish(IntegrationEvent integrationEvent, string exchange, string routingKey = null, Dictionary<string, object> arguments = null)
+        public void Publish(IntegrationEvent integrationEvent, string exchange, string routingKey = "", Dictionary<string, object> arguments = null)
         {
             var channel = _channelManager.GetPublisherChannel();
             var publishProperties = channel.CreateBasicProperties();

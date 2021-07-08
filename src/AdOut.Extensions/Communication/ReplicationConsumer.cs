@@ -19,7 +19,7 @@ namespace AdOut.Extensions.Communication
             using var scope = _serviceScopeFactory.CreateScope();
             var replicationFactory = scope.ServiceProvider.GetRequiredService<IReplicationHandlerFactory<TEntity>>();
             var replicationHandler = replicationFactory.CreateReplicationHandler(deliveredEvent.Action);
-            await replicationHandler.HandleAsync(deliveredEvent.Data);
+            await replicationHandler?.HandleAsync(deliveredEvent.Data);
         }
     }
 }
