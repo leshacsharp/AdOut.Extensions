@@ -51,14 +51,14 @@ namespace AdOut.Extensions.Communication
             channel.BasicConsume(queue, true, consumer);
         }
 
-        public void CreateQueue(Type eventType, string routingKey = null, Dictionary<string, object> arguments = null)
+        public void CreateQueue(Type eventType, string routingKey = "", Dictionary<string, object> arguments = null)
         {
             var queue = _messageBrokerHelper.GetQueueName(eventType);
             var exchange = _messageBrokerHelper.GetExchangeName(eventType);
             CreateQueue(queue, exchange, routingKey, arguments);
         }
 
-        public void CreateQueue(string queue, string exchange, string routingKey = null, Dictionary<string, object> arguments = null)
+        public void CreateQueue(string queue, string exchange, string routingKey = "", Dictionary<string, object> arguments = null)
         {
             var channel = _channelManager.GetPublisherChannel();
             channel.QueueDeclare(queue, true, false, false, null);
