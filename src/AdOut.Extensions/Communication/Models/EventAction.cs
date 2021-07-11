@@ -2,8 +2,8 @@
 {
     public enum EventAction
     {
-        Deleted = 2,
-        Updated = 3,
-        Created = 4
+        Created = 0,
+        Updated = 1,
+        Deleted = 2
     }
 }

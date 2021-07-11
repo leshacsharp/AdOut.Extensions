@@ -48,6 +48,7 @@ namespace AdOut.Extensions.Communication
         public void Subscribe(string queue, IBasicConsumer consumer)
         {
             var channel = _channelManager.GetConsumerChannel();
+            channel.QueueDeclare(queue, true, false, false, null);
             channel.BasicConsume(queue, true, consumer);
         }
 

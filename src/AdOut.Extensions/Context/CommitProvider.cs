@@ -76,11 +76,29 @@ namespace AdOut.Extensions.Context
                 {
                     var replicationEventType = typeof(ReplicationEvent<>).MakeGenericType(entityType);
                     var replicationEvent = (IntegrationEvent)Activator.CreateInstance(replicationEventType);
+           
+                    var actionProp = replicationEventType.GetProperty(nameof(ReplicationEvent<PersistentEntity>.Action));
+                    var dataProp = replicationEventType.GetProperty(nameof(ReplicationEvent<PersistentEntity>.Data));     
+                    actionProp.SetValue(replicationEvent, ConvertEventAction(entry.State));
+                    dataProp.SetValue(replicationEvent, entry.Entity);
+                    replicationEvent.Creator = ((PersistentEntity)entry.Entity).Creator;
+
                     integrationEvents.Add(replicationEvent);
                 }
             }
 
             return integrationEvents;
+        }
+
+        private EventAction ConvertEventAction(EntityState state)
+        {
+            return state switch
+            {
+                EntityState.Added => EventAction.Created,
+                EntityState.Modified => EventAction.Updated,
+                EntityState.Deleted => EventAction.Deleted,
+                _ => throw new NotImplementedException()
+            };
         }
     }
 }

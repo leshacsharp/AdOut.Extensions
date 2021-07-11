@@ -58,7 +58,7 @@ namespace AdOut.Extensions.Communication
         {
             var entitiesToReplicate = AppDomain.CurrentDomain.GetAssemblies()
                                      .SelectMany(a => a.GetTypes())
-                                     .Where(t => t == typeof(PersistentEntity) && t.GetCustomAttributes(typeof(ReplicationAttribute), false).Any());
+                                     .Where(t => t.BaseType == typeof(PersistentEntity) && t.GetCustomAttributes(typeof(ReplicationAttribute), false).Any());
 
             foreach (var entityType in entitiesToReplicate)
             {
