@@ -52,6 +52,8 @@ namespace AdOut.Extensions.Communication
             channel.BasicConsume(queue, true, consumer);
         }
 
+        //todo: refactor abstraction to less complixity of using message broker
+
         public void CreateQueue(Type eventType, string routingKey = "", Dictionary<string, object> arguments = null)
         {
             var queue = _messageBrokerHelper.GetQueueName(eventType);

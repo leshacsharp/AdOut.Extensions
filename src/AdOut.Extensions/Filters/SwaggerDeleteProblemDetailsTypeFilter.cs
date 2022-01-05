@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AdOut.Extensions.Filters
 {
-    public class SwaggerDeleteProblemDetailsTypeFilter
+    public class SwaggerDeleteProblemDetailsTypeFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {

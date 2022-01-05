@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdOut.Extensions.Filters
 {
-    class SwaggerContentTypeFilter : IOperationFilter
+    public class SwaggerContentTypeFilter : IOperationFilter
     {
         private readonly string[] _mediaTypes;
         public SwaggerContentTypeFilter(string[] mediaTypes)
